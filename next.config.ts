@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Keep Node-only parsers out of the bundler; they run in route handlers.
+  serverExternalPackages: ["jsdom", "unpdf", "mammoth", "@prisma/client"],
 };
 
 export default nextConfig;

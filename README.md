@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Applywise — your job application tracker
 
-## Getting Started
+A private, local web app to track your job hunt on a pipeline board and generate
+tailored application kits (cover letter, resume bullets, likely interview
+questions, and a company brief) using AI via OpenRouter.
 
-First, run the development server:
+Everything runs **on your own computer**. Your data lives in a local file
+(`dev.db`); your OpenRouter API key is stored locally and never leaves your machine
+except to call OpenRouter.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Starting the app
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Open a terminal in this folder.
+2. Run:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   npm run dev
+   ```
 
-## Learn More
+3. Open **http://localhost:3000** in your browser.
 
-To learn more about Next.js, take a look at the following resources:
+To stop it, press `Ctrl + C` in the terminal.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> First time on a fresh machine? Make sure Node.js is installed (https://nodejs.org),
+> then run `npm install` once before `npm run dev`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## First-time setup (2 minutes)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Settings** → paste your **OpenRouter API key** (get one at
+   https://openrouter.ai/keys). Click **Test connection** to confirm it works.
+   The default model is **Claude Sonnet** — change it anytime.
+2. **Profile** → **Upload** your resume (PDF or DOCX). The text is extracted into
+   an editable box; tidy it up and **Save**.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Using it
+
+- **Add a job** (top-right on the board): paste a job **link** and click *Fetch* to
+  auto-fill the details, or just type them in. New jobs land in **Wishlist**.
+- **Drag cards** between columns: Wishlist → Applied → Interviewing → Offer → Rejected.
+- **Click a card** to open it. Edit the description/notes, then click
+  **Generate kit** to get your four AI documents. **Copy** or **Download** each one,
+  or **Regenerate** to try again. Generated kits are saved with the job.
+
+A small **Kit ready** badge appears on cards that already have a generated kit.
+
+---
+
+## Notes
+
+- Some job sites block automated fetching — when that happens, just paste the job
+  description into the box manually.
+- AI output can contain mistakes. Always review before sending anything.
+
+## Tech
+
+Next.js (App Router) · TypeScript · Tailwind CSS · Prisma + SQLite · @dnd-kit ·
+OpenRouter. The visual design follows `DESIGN.md` (a Linear-inspired dark theme).
+Built to run locally now and deploy later (swap SQLite for Postgres in
+`prisma/schema.prisma`).
