@@ -55,7 +55,6 @@ A small **Kit ready** badge appears on cards that already have a generated kit.
 
 - Some job sites block automated fetching — when that happens, just paste the job
   description into the box manually.
-- AI output can contain mistakes. Always review before sending anything.
 
 ## Tech
 

@@ -3,7 +3,8 @@ import { AUTH_COOKIE, authToken } from "@/lib/auth";
 
 // Gate the whole app behind a single password when APP_PASSWORD is set.
 // Skips static assets (see matcher) and the unlock endpoints themselves.
-export async function middleware(req: NextRequest) {
+// (Next 16 renamed the "middleware" convention to "proxy".)
+export async function proxy(req: NextRequest) {
   const password = process.env.APP_PASSWORD;
   if (!password) return NextResponse.next(); // lock disabled
 

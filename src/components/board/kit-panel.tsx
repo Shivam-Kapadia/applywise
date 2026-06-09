@@ -86,16 +86,12 @@ export function KitPanel({
                 </Button>
               </div>
             </div>
-            <pre className="max-h-80 overflow-auto whitespace-pre-wrap px-4 py-3 font-sans text-sm leading-relaxed text-ink-muted">
+            <pre className="max-h-[28rem] overflow-auto whitespace-pre-wrap px-5 py-4 font-sans text-sm leading-7 text-ink">
               {kit[f.key]}
             </pre>
           </div>
         </TabsContent>
       ))}
-
-      <p className="mt-2 text-xs text-ink-tertiary">
-        Generated with {kit.modelUsed}. AI can make mistakes — review before sending.
-      </p>
     </Tabs>
   );
 }

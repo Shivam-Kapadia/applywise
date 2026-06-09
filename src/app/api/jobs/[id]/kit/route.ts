@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma, getProfile, getSettings } from "@/lib/db";
 import { chat, OpenRouterError } from "@/lib/openrouter";
 import { KIT_PROMPTS, type KitContext } from "@/lib/prompts";
+import { cleanText } from "@/lib/clean-text";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -40,8 +41,11 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     candidateName: profile.fullName,
   };
 
-  const run = (messages: ReturnType<(typeof KIT_PROMPTS)["coverLetter"]>) =>
-    chat({ apiKey: settings.openRouterApiKey, model: settings.model, messages });
+  // Strip any stray markdown so the saved text is always clean plain text.
+  const run = async (messages: ReturnType<(typeof KIT_PROMPTS)["coverLetter"]>) =>
+    cleanText(
+      await chat({ apiKey: settings.openRouterApiKey, model: settings.model, messages })
+    );
 
   try {
     const [coverLetter, resumeBullets, interviewQuestions, companyBrief] =

@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# local launcher (machine-specific path)
+/Open Applywise.bat
 
 # local database (contains your API key, resume, and jobs — never commit)
 *.db

@@ -13,7 +13,10 @@ Rules you must follow:
 - Ground everything strictly in the candidate's resume and the job description provided.
 - Never invent employers, titles, dates, degrees, or metrics the resume does not support.
 - Write in clear, natural, professional English. No fluff, no clichés, no emojis.
-- Return plain text only (light markdown like bullet points is fine). No preamble like "Sure, here is...".`;
+- Output CLEAN PLAIN TEXT only. Do NOT use any markdown: no #, ##, ###, no ** or * for bold/italic,
+  no backticks, no markdown links or tables. Where a list helps, start each line with a simple
+  "- " dash. Plain numbers like "1." are fine for ordered lists.
+- No preamble ("Sure, here is...") and no closing meta commentary about yourself or the output.`;
 
 function context(ctx: KitContext): string {
   return `JOB TITLE: ${ctx.jobTitle || "(unknown)"}
@@ -42,19 +45,19 @@ export const KIT_PROMPTS = {
 
   resumeBullets: (ctx: KitContext) =>
     msg(
-      `Rewrite the candidate's most relevant resume bullets to target this specific job. Produce 6-8 punchy, results-oriented bullets that start with strong verbs and reflect the keywords and priorities in the job description — but only using accomplishments supported by the resume. Output as a markdown bullet list.`,
+      `Rewrite the candidate's most relevant resume bullets to target this specific job. Produce 6-8 punchy, results-oriented bullets that start with strong verbs and reflect the keywords and priorities in the job description — but only using accomplishments supported by the resume. Write each bullet on its own line starting with "- ". Plain text only — no bold, no headings, no asterisks.`,
       ctx
     ),
 
   interviewQuestions: (ctx: KitContext) =>
     msg(
-      `List the 5 most likely interview questions for this specific role and candidate. For each, add a one-sentence tip on what the interviewer is really probing for. Number them 1-5.`,
+      `List the 5 most likely interview questions for this specific role and candidate. Number each question 1 to 5. On the line right below each question, write a short tip (starting with "Tip: ") on what the interviewer is really probing for. Leave a blank line between questions. Plain text only — no bold, no headings, no asterisks.`,
       ctx
     ),
 
   companyBrief: (ctx: KitContext) =>
     msg(
-      `Write a concise one-page company brief to help the candidate prepare. Cover: what the company does, likely products/market, why this role matters to them, and 3 smart questions the candidate could ask. If you are not certain about a fact, clearly hedge it. Begin with a one-line note that this is AI-generated and should be verified. Use short markdown sections.`,
+      `Write a concise one-page company brief to help the candidate prepare. Cover, in this order: what the company does, its likely products/market, why this role matters to them, and 3 smart questions the candidate could ask. Use short plain-text section labels followed by a colon (e.g. "What they do:") — never a # symbol. If a fact is uncertain, phrase it naturally (e.g. "likely" or "appears to"). Plain text only — no bold, no headings with #, no asterisks.`,
       ctx
     ),
 } as const;

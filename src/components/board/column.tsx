@@ -24,21 +24,25 @@ export function Column({
 
   return (
     <div className="flex w-72 shrink-0 flex-col sm:w-auto">
-      <div className="mb-3 flex items-center gap-2 px-1">
+      <div className="mb-2.5 flex items-center gap-2 px-1.5">
         <span
           className="h-2 w-2 rounded-full"
           style={{ background: `var(${dotVar})` }}
           aria-hidden
         />
         <span className="text-eyebrow text-ink-subtle">{label}</span>
-        <span className="text-xs text-ink-tertiary">{jobs.length}</span>
+        <span className="ml-auto min-w-5 rounded-full bg-surface-2 px-1.5 text-center text-[11px] font-medium text-ink-subtle">
+          {jobs.length}
+        </span>
       </div>
 
       <div
         ref={setNodeRef}
         className={cn(
-          "flex min-h-32 flex-1 flex-col gap-2 rounded-lg p-2 transition-colors",
-          isOver ? "bg-surface-1 ring-1 ring-hairline-strong" : "bg-transparent"
+          "flex min-h-[60vh] flex-1 flex-col gap-2 rounded-xl border p-2 transition-colors",
+          isOver
+            ? "border-hairline-strong bg-surface-1"
+            : "border-hairline bg-white/[0.012]"
         )}
       >
         <SortableContext items={jobs.map((j) => j.id)} strategy={verticalListSortingStrategy}>
@@ -48,8 +52,8 @@ export function Column({
         </SortableContext>
 
         {jobs.length === 0 && (
-          <p className="px-1 py-6 text-center text-xs text-ink-tertiary">
-            Drop a card here
+          <p className="m-auto select-none text-center text-xs text-ink-tertiary">
+            Drop jobs here
           </p>
         )}
       </div>
