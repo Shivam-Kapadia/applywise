@@ -9,8 +9,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 A local-first job application tracker for a single, non-technical user. A Kanban board
 (Wishlist → Applied → Interviewing → Offer → Rejected) of draggable job cards; clicking a card
 generates an AI "application kit" (cover letter, resume bullets, 5 interview questions, company
-brief) via **OpenRouter**. Runs locally on SQLite; built to deploy later by swapping the Prisma
-datasource to Postgres without app-code changes.
+brief) via **OpenRouter**. A **Find Jobs** page (`/discover`) searches live openings (The Muse) and
+sends results straight to the Wishlist. Runs locally on SQLite; built to deploy later by swapping the
+Prisma datasource to Postgres without app-code changes. An optional single-password lock gates the
+whole app when hosted.
 
 ## Commands
 
@@ -34,7 +36,13 @@ No test suite. Validate with `npm run build` and by exercising the running app.
   datasources and needs a native driver adapter (risky build on Node 24). v6 uses the bundled SQLite
   engine.
 - `.claude/launch.json` (preview server) invokes node by absolute path because the preview spawn has
-  no node on PATH.
+  no node on PATH. `Open Applywise.bat` (double-click launcher) is gitignored — it has a machine path.
+
+### Environment variables (`.env`; see `.env.example`)
+- `DATABASE_URL` — SQLite file locally (`file:./dev.db`); swap to a Postgres URL on deploy.
+- `APP_PASSWORD` — **optional.** When set, `src/proxy.ts` locks the whole app behind it; when unset,
+  the app is open (the default locally). The OpenRouter key is **not** here — it lives in the
+  `Settings` DB row.
 
 ## Architecture
 
@@ -55,6 +63,9 @@ No test suite. Validate with `npm run build` and by exercising the running app.
   `hasApiKey`, never the key.
 - `src/lib/prompts.ts` holds the four kit prompts (shared system prompt grounds output strictly in
   the resume + job text). `POST /api/jobs/[id]/kit` runs all four in parallel and upserts the `Kit`.
+- **Output is plain text — no markdown, no "AI-generated" disclaimers.** The prompts forbid markdown,
+  and `src/lib/clean-text.ts` (`cleanText`) strips any stray `#`/`**`/bullets server-side before
+  saving. Keep both in sync; don't reintroduce disclaimer copy in the prompts or the kit UI.
 
 ### API routes (`src/app/api/**/route.ts`)
 Thin handlers over Prisma. In Next 16 `params` is a Promise — `await params`. Node-only parsers
@@ -65,6 +76,22 @@ so the bundler leaves them alone.
 - `POST /api/fetch-url` — jsdom + @mozilla/readability; returns `partial: true` (HTTP 200) on failure
   instead of erroring, since many job sites block scraping and the UI falls back to manual paste.
 - `POST /api/profile/upload` — multipart PDF/DOCX → text via unpdf / mammoth.
+- `POST /api/discover` — job search. Body `{ role, location, type }`; returns normalized results.
+  Soft-fails with `{ error }` at HTTP 200 so the UI shows a friendly message (e.g. rate limits).
+- `POST /api/unlock` — verifies `APP_PASSWORD` and sets the auth cookie (see Password lock).
+
+### Find Jobs (`src/app/discover/page.tsx`, `src/lib/the-muse.ts`)
+- `searchJobs()` queries **The Muse public API (no key)**. Always biased to undergrad-friendly
+  levels: it requests only `Internship` + `Entry Level` — the Research/Internship/Full-time toggle
+  just refines within that (never request senior/mid). The Muse has no free-text query, so it fetches
+  a few pages by level/location and filters by role keyword against the title; HTML is stripped to
+  plain text. "Wishlist" buttons POST to `/api/jobs`. Last search persists in `localStorage`.
+
+### Password lock (`src/proxy.ts`, `src/lib/auth.ts`, `/unlock`)
+- Next 16 renamed the `middleware` convention to **`proxy`** — the file is `src/proxy.ts` exporting a
+  `proxy` function (do not recreate `middleware.ts`). It's a no-op unless `APP_PASSWORD` is set.
+- `authToken()` (Web Crypto SHA-256, edge-safe) derives the cookie value shared by the proxy and the
+  `/api/unlock` route. `/unlock` is the on-brand password page; `TopNav`/`SiteFooter` hide there.
 
 ### Board UI (`src/components/board/`)
 - `board.tsx` is the client-side source of truth: groups jobs into `Record<Status, JobWithKit[]>`
